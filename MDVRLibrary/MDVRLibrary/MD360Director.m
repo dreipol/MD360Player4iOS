@@ -7,9 +7,13 @@
 //
 
 #import "MD360Director.h"
-#import "GLUtil.h"
 
-@interface MD360Director(){
+static const CGFloat kUpdateThreshold = 0.01;
+
+BOOL shouldUpdate(float currentValue, float newValue);
+
+@interface MD360Director ()
+{
     GLKMatrix4 mModelMatrix;// = new float[16];
     GLKMatrix4 mViewMatrix;// = new float[16];
     GLKMatrix4 mProjectionMatrix;// = new float[16];
@@ -129,14 +133,22 @@ static float sNear = 0.7f;
     mSensorMatrix = GLKMatrix4Identity;
 }
 
-- (void) updateProjection:(int)width height:(int)height{
-    mRatio = width * 1.0f / height;
-    [self updateProjection];
+- (void)updateProjection:(int)width
+                  height:(int)height
+{
+    float newRatio = width * 1.0f / height;
+    if (shouldUpdate(mRatio, newRatio)) {
+        mRatio = newRatio;
+        [self updateProjection];
+    }
 }
 
-- (void) updateProjectionNearScale:(float)scale{
-    mNearScale = scale;
-    [self updateProjection];
+- (void)updateProjectionNearScale:(float)scale
+{
+    if (shouldUpdate(mNearScale, scale)) {
+        mNearScale = scale;
+        [self updateProjection];
+    }
 }
 
 - (void) updateModelRotateAngleX:(float)angleX angleY:(float)angleY {
