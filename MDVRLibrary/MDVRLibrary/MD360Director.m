@@ -42,6 +42,11 @@ BOOL shouldUpdate(float currentValue, float newValue);
 }
 @end
 
+BOOL shouldUpdate(float currentValue, float newValue) {
+    float diff = fabs(currentValue - newValue);
+    return diff > kUpdateThreshold;
+}
+
 @implementation MD360Director
 
 static float sNear = 0.7f;
